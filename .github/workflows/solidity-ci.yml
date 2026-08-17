@@ -26,5 +26,5 @@ jobs:
       - name: Run Solidity unit tests
         uses: EthereumRemix/sol-test@v1.2
         with:
-          test-path: test/SimpleStorage_test.sol
+          test-path: test/
           compiler-version: 0.8.20
