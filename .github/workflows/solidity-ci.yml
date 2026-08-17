@@ -23,6 +23,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install NPM dependencies (OpenZeppelin)
+        run: npm ci
+
       - name: Run Solidity unit tests
         uses: EthereumRemix/sol-test@v1.2
         with:
