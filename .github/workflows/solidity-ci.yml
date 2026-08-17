@@ -1,0 +1,30 @@
+name: Solidity CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  remix-solidity-tests:
+    name: Compile and test Solidity contracts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run Solidity unit tests
+        uses: EthereumRemix/sol-test@v1.2
+        with:
+          test-path: test/SimpleStorage_test.sol
+          compiler-version: 0.8.20
