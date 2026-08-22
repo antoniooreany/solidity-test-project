@@ -2,19 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "remix_tests.sol";
+import "remix_accounts.sol";
 import "../contracts/MyToken.sol";
-
-// Helper contract to act as a third-party spender
-contract Spender {
-    function transferFrom(
-        MyToken token,
-        address from,
-        address to,
-        uint256 amount
-    ) external returns (bool) {
-        return token.transferFrom(from, to, amount);
-    }
-}
 
 contract MyTokenTest {
     MyToken private token;
@@ -43,31 +32,32 @@ contract MyTokenTest {
     }
 
     function checkTransfer() public {
-        address receiver = address(0x123);
+        address receiver = TestsAccounts.getAccount(1);
         uint256 amount = 100 * 10**18;
         token.transfer(receiver, amount);
         Assert.equal(token.balanceOf(receiver), amount, "Receiver should get 100 tokens");
     }
 
-    // Spender test
     function checkApproveAndTransferFrom() public {
-        Spender spender = new Spender();
-        address receiver = address(0x123);
+        // Test contract approves ITSELF to spend its own tokens, 
+        // to test approve + transferFrom logic without needing a separate spender contract.
+        address spender = address(this);
+        address receiver = TestsAccounts.getAccount(1);
         uint256 amount = 50 * 10**18;
 
-        token.approve(address(spender), amount);
-        Assert.equal(token.allowance(address(this), address(spender)), amount, "Allowance should be set correctly");
+        token.approve(spender, amount);
+        Assert.equal(token.allowance(address(this), spender), amount, "Allowance should be set correctly");
 
-        bool success = spender.transferFrom(token, address(this), receiver, amount);
+        bool success = token.transferFrom(address(this), receiver, amount);
         Assert.ok(success, "transferFrom should succeed");
         
         Assert.equal(token.balanceOf(receiver), amount, "TransferFrom should move tokens to receiver");
-        Assert.equal(token.allowance(address(this), address(spender)), 0, "Allowance should decrease to 0");
+        Assert.equal(token.allowance(address(this), spender), 0, "Allowance should decrease to 0");
     }
 
     // Negative tests
     function checkTransferFailsExceedingBalance() public {
-        address receiver = address(0x123);
+        address receiver = TestsAccounts.getAccount(1);
         uint256 amount = token.balanceOf(address(this)) + 1; // More than balance
         
         // Low-level call to catch revert
@@ -78,16 +68,16 @@ contract MyTokenTest {
     }
 
     function checkTransferFromFailsExceedingAllowance() public {
-        Spender spender = new Spender();
-        address receiver = address(0x123);
+        address spender = address(this);
+        address receiver = TestsAccounts.getAccount(1);
         uint256 amount = 50 * 10**18;
 
-        token.approve(address(spender), amount);
+        token.approve(spender, amount);
         
         // Attempt to transfer more than allowance
         uint256 tooMuch = amount + 1;
-        (bool success, ) = address(spender).call(
-            abi.encodeWithSignature("transferFrom(address,address,address,uint256)", address(token), address(this), receiver, tooMuch)
+        (bool success, ) = address(token).call(
+            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(this), receiver, tooMuch)
         );
         Assert.equal(success, false, "transferFrom exceeding allowance should revert");
     }
