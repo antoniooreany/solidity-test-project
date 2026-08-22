@@ -81,4 +81,51 @@ contract MyTokenTest {
         );
         Assert.equal(success, false, "transferFrom exceeding allowance should revert");
     }
+
+    function checkTransferToZeroAddressFails() public {
+        uint256 amount = 100 * 10**18;
+        
+        (bool success, ) = address(token).call(
+            abi.encodeWithSignature("transfer(address,uint256)", address(0), amount)
+        );
+        Assert.equal(success, false, "Transfer to zero address should revert");
+    }
+
+    function checkApproveToZeroAddressFails() public {
+        uint256 amount = 100 * 10**18;
+        
+        (bool success, ) = address(token).call(
+            abi.encodeWithSignature("approve(address,uint256)", address(0), amount)
+        );
+        Assert.equal(success, false, "Approve to zero address should revert");
+    }
+
+    // =========================================================================
+    // Invariant / Property Tests
+    // =========================================================================
+
+    function checkInvariantTotalSupplyConstant() public {
+        uint256 initialSupply = token.totalSupply();
+        
+        address receiver = TestsAccounts.getAccount(1);
+        token.transfer(receiver, 100 * 10**18);
+        
+        Assert.equal(token.totalSupply(), initialSupply, "INV-001: Total supply must never change");
+    }
+
+    function checkInvariantBalancesSum() public {
+        uint256 initialSupply = token.totalSupply();
+        address receiver = TestsAccounts.getAccount(1);
+        
+        // Before transfer
+        uint256 sumBefore = token.balanceOf(address(this)) + token.balanceOf(receiver);
+        Assert.equal(sumBefore, initialSupply, "INV-002: Sum of balances must equal total supply before transfer");
+        
+        // Transfer
+        token.transfer(receiver, 100 * 10**18);
+        
+        // After transfer
+        uint256 sumAfter = token.balanceOf(address(this)) + token.balanceOf(receiver);
+        Assert.equal(sumAfter, initialSupply, "INV-002: Sum of balances must equal total supply after transfer");
+    }
 }
