@@ -1,6 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const { ENV, config } = require('../config/constants');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { ENV, config } from '../config/constants.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define logs directory relative to project root
 const LOGS_DIR = path.join(__dirname, '..', '..', 'logs');
@@ -63,4 +67,4 @@ class Logger {
     }
 }
 
-module.exports = Logger;
+export default Logger;

@@ -6,7 +6,7 @@
  * synchronized across all system layers during the build/deploy process."
  */
 
-const ENV = process.env.NODE_ENV || 'development';
+export const ENV = process.env.NODE_ENV || 'development';
 
 // Core global configurations to be synchronized across Client, Worker, and Microservices
 const GLOBAL_CONFIG = {
@@ -43,7 +43,4 @@ function getActiveConfig() {
     return GLOBAL_CONFIG[ENV];
 }
 
-module.exports = {
-    ENV,
-    config: getActiveConfig()
-};
+export const config = getActiveConfig();
