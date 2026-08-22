@@ -6,7 +6,7 @@ import "../contracts/MyToken.sol";
 
 // Helper contract to act as a third-party spender
 contract Spender {
-    function transferFrom(
+    function executeTransferFrom(
         MyToken token,
         address from,
         address to,
@@ -16,11 +16,17 @@ contract Spender {
     }
 }
 
+// Helper contract to act as a valid receiver address (fixes dumpStorage error for non-existent accounts)
+contract Receiver {
+}
+
 contract MyTokenTest {
     MyToken private token;
+    Receiver private receiverContract;
 
     function beforeEach() public {
         token = new MyToken();
+        receiverContract = new Receiver();
     }
 
     function checkNameAndSymbol() public {
@@ -43,7 +49,7 @@ contract MyTokenTest {
     }
 
     function checkTransfer() public {
-        address receiver = address(0x123);
+        address receiver = address(receiverContract);
         uint256 amount = 100 * 10**18;
         token.transfer(receiver, amount);
         Assert.equal(token.balanceOf(receiver), amount, "Receiver should get 100 tokens");
@@ -52,13 +58,13 @@ contract MyTokenTest {
     // Spender test
     function checkApproveAndTransferFrom() public {
         Spender spender = new Spender();
-        address receiver = address(0x123);
+        address receiver = address(receiverContract);
         uint256 amount = 50 * 10**18;
 
         token.approve(address(spender), amount);
         Assert.equal(token.allowance(address(this), address(spender)), amount, "Allowance should be set correctly");
 
-        bool success = spender.transferFrom(token, address(this), receiver, amount);
+        bool success = spender.executeTransferFrom(token, address(this), receiver, amount);
         Assert.ok(success, "transferFrom should succeed");
         
         Assert.equal(token.balanceOf(receiver), amount, "TransferFrom should move tokens to receiver");
@@ -67,7 +73,7 @@ contract MyTokenTest {
 
     // Negative tests
     function checkTransferFailsExceedingBalance() public {
-        address receiver = address(0x123);
+        address receiver = address(receiverContract);
         uint256 amount = token.balanceOf(address(this)) + 1; // More than balance
         
         // Low-level call to catch revert
@@ -79,7 +85,7 @@ contract MyTokenTest {
 
     function checkTransferFromFailsExceedingAllowance() public {
         Spender spender = new Spender();
-        address receiver = address(0x123);
+        address receiver = address(receiverContract);
         uint256 amount = 50 * 10**18;
 
         token.approve(address(spender), amount);
@@ -87,7 +93,7 @@ contract MyTokenTest {
         // Attempt to transfer more than allowance
         uint256 tooMuch = amount + 1;
         (bool success, ) = address(spender).call(
-            abi.encodeWithSignature("transferFrom(address,address,address,uint256)", address(token), address(this), receiver, tooMuch)
+            abi.encodeWithSignature("executeTransferFrom(address,address,address,uint256)", address(token), address(this), receiver, tooMuch)
         );
         Assert.equal(success, false, "transferFrom exceeding allowance should revert");
     }
