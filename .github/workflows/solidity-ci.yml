@@ -114,3 +114,32 @@ jobs:
             echo "Example: feat(counter): add increment function"
             exit 1
           fi
+  # ===========================================================================
+  # Job 4: Run Node.js Tests and Deployment Dry-Run
+  # ===========================================================================
+  node-tests:
+    name: Run Node tests and Dry-Run deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Compile Contracts
+        run: npx hardhat compile
+
+      - name: Run Logger Tests
+        run: npx mocha test_hardhat/*.test.js
+
+      - name: Test Deployment Script (Dry Run)
+        env:
+          DRY_RUN: 'true'
+          PRIVATE_KEY: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+        run: node scripts/deploy.js
