@@ -36,7 +36,7 @@ jobs:
         uses: EthereumRemix/sol-test@v1.2
         with:
           test-path: test/
-          compiler-version: 0.8.20
+          compiler-version: 0.8.24
 
   # ===========================================================================
   # Job 2: Verify spec traceability — every contract must have a spec
