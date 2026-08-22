@@ -22,3 +22,7 @@ artifacts/
 
 # Gemini / AI agent artifacts
 .gemini/
+
+# Logs
+logs/*.jsonl
+!logs/.gitkeep
