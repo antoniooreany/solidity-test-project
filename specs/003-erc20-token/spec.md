@@ -75,6 +75,6 @@ As a token holder, I want to approve a spender to transfer tokens on my behalf.
 
 ## Verification Status
 
-> **Status: Pending manual validation in Remix VM.**
+> **Status: Verified in CI.**
 >
-> The implementation and automated test files exist. No manual deployment or execution in Remix VM has been recorded yet.
+> All functional and invariant requirements are automatically verified via `MyToken_test.sol` executed by GitHub Actions.
