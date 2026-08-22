@@ -73,6 +73,7 @@ docs/
 
 ### Prerequisites
 
+- Solidity Compiler `0.8.24` (Pinned globally across the project)
 - [Remix IDE](https://remix.ethereum.org) for smart contract development
 - Node.js + npm for OpenZeppelin dependencies
 - [SpecKit CLI](https://github.com/github/spec-kit) for SDD workflow
