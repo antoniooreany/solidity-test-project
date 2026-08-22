@@ -1,9 +1,24 @@
+# Dependencies
 node_modules/
+
+# Environment
 .env
+
+# Build artifacts
 build/
-artifacts/
 cache/
 typechain/
 typechain-types/
+
+# Test coverage
 coverage/
 coverage.json
+
+# Remix artifacts (compiled contracts)
+artifacts/
+
+# SpecKit local state (history, logs)
+.specify/history/
+
+# Gemini / AI agent artifacts
+.gemini/

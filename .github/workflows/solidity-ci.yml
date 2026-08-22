@@ -6,6 +6,9 @@ on:
       - main
       - develop
       - "feature/**"
+      - "fix/**"
+      - "release/**"
+      - "hotfix/**"
   pull_request:
     branches:
       - main
@@ -15,6 +18,9 @@ permissions:
   contents: read
 
 jobs:
+  # ===========================================================================
+  # Job 1: Compile and run Solidity unit tests
+  # ===========================================================================
   remix-solidity-tests:
     name: Compile and test Solidity contracts
     runs-on: ubuntu-latest
@@ -31,3 +37,80 @@ jobs:
         with:
           test-path: test/
           compiler-version: 0.8.20
+
+  # ===========================================================================
+  # Job 2: Verify spec traceability — every contract must have a spec
+  # ===========================================================================
+  spec-traceability:
+    name: Verify spec traceability
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check that every contract has a corresponding spec
+        run: |
+          echo "=== Spec Traceability Check ==="
+          EXIT_CODE=0
+
+          for contract in contracts/*.sol; do
+            name=$(basename "$contract" .sol)
+            # Search for spec.md files that reference this contract
+            found=false
+            for spec_dir in specs/*/; do
+              if [ -f "${spec_dir}spec.md" ]; then
+                if grep -qi "$name" "${spec_dir}spec.md" 2>/dev/null; then
+                  found=true
+                  echo "✅ $name.sol → ${spec_dir}spec.md"
+                  break
+                fi
+              fi
+            done
+            if [ "$found" = false ]; then
+              echo "❌ $name.sol — NO SPEC FOUND in specs/"
+              EXIT_CODE=1
+            fi
+          done
+
+          echo ""
+          echo "=== Test Coverage Check ==="
+          for contract in contracts/*.sol; do
+            name=$(basename "$contract" .sol)
+            test_file="test/${name}_test.sol"
+            if [ -f "$test_file" ]; then
+              echo "✅ $name.sol → $test_file"
+            else
+              echo "❌ $name.sol — NO TEST FILE at $test_file"
+              EXIT_CODE=1
+            fi
+          done
+
+          exit $EXIT_CODE
+
+  # ===========================================================================
+  # Job 3: Validate PR title follows Conventional Commits (PR only)
+  # ===========================================================================
+  conventional-commits:
+    name: Validate Conventional Commits
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Check PR title format
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+
+          # Conventional Commits pattern: type(scope): description
+          PATTERN='^(feat|fix|test|docs|chore|refactor|ci|perf|style|build|revert)(\(.+\))?: .+'
+          if echo "$PR_TITLE" | grep -qE "$PATTERN"; then
+            echo "✅ PR title follows Conventional Commits format"
+          else
+            echo "❌ PR title does NOT follow Conventional Commits format"
+            echo ""
+            echo "Expected format: <type>(<scope>): <description>"
+            echo "Types: feat, fix, test, docs, chore, refactor, ci, perf, style, build, revert"
+            echo "Example: feat(counter): add increment function"
+            exit 1
+          fi
