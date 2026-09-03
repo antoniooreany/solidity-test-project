@@ -25,12 +25,12 @@
 
 ## Traceability Matrix
 
-| Requirement | Task(s) | Test | Contract Line | Status |
-|-------------|---------|------|---------------|--------|
-| FR-001 | T008 | — | SimpleStorage.sol:8 | ✅ |
-| FR-002 | T004, T008 | `checkInitialValueIsEmpty` | SimpleStorage.sol:15 | ✅ |
-| FR-003 | T005, T008 | `checkOwnerIsDeployer` | SimpleStorage.sol:13 | ✅ |
-| FR-004 | T006, T007, T010 | `checkOwnerCanSetValue`, `checkSubsequentUpdatesReplaceValue` | SimpleStorage.sol:23-28 | ✅ |
-| FR-005 | T011 | (getValue is public view) | SimpleStorage.sol:30-32 | ✅ |
-| FR-006 | T010 | (event emitted in setValue) | SimpleStorage.sol:10, 27 | ✅ |
-| FR-007 | T009 | `checkNonOwnerCannotSetValue` | SimpleStorage.sol:5, 18-21 | ⚠️ Test exists in spec but missing in test file |
+| Requirement | Task(s)          | Test                                                          | Contract Line              | Status                                          |
+| ----------- | ---------------- | ------------------------------------------------------------- | -------------------------- | ----------------------------------------------- |
+| FR-001      | T008             | —                                                             | SimpleStorage.sol:8        | ✅                                              |
+| FR-002      | T004, T008       | `checkInitialValueIsEmpty`                                    | SimpleStorage.sol:15       | ✅                                              |
+| FR-003      | T005, T008       | `checkOwnerIsDeployer`                                        | SimpleStorage.sol:13       | ✅                                              |
+| FR-004      | T006, T007, T010 | `checkOwnerCanSetValue`, `checkSubsequentUpdatesReplaceValue` | SimpleStorage.sol:23-28    | ✅                                              |
+| FR-005      | T011             | (getValue is public view)                                     | SimpleStorage.sol:30-32    | ✅                                              |
+| FR-006      | T010             | (event emitted in setValue)                                   | SimpleStorage.sol:10, 27   | ✅                                              |
+| FR-007      | T009             | `checkNonOwnerCannotSetValue`                                 | SimpleStorage.sol:5, 18-21 | ⚠️ Test exists in spec but missing in test file |

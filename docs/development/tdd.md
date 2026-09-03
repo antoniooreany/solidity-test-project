@@ -12,20 +12,20 @@ This project follows strict TDD for all smart contract development. Tests are wr
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "remix_tests.sol";
-import "../contracts/MyContract.sol";
+import 'remix_tests.sol';
+import '../contracts/MyContract.sol';
 
 contract MyContractTest {
-    MyContract private myContract;
+  MyContract private myContract;
 
-    function beforeEach() public {
-        myContract = new MyContract();
-    }
+  function beforeEach() public {
+    myContract = new MyContract();
+  }
 
-    /// @dev FR-001: Initial state must be zero
-    function checkInitialState() public {
-        Assert.equal(myContract.getValue(), 0, "Initial value should be 0");
-    }
+  /// @dev FR-001: Initial state must be zero
+  function checkInitialState() public {
+    Assert.equal(myContract.getValue(), 0, 'Initial value should be 0');
+  }
 }
 ```
 
@@ -41,9 +41,9 @@ Clean up code while keeping all tests green.
 
 Remix test functions MUST start with `check` or `checkFail` prefix:
 
-| Prefix | Purpose | Example |
-|--------|---------|--------|
-| `check` | Positive test | `checkInitialValueIsZero()` |
+| Prefix      | Purpose              | Example                         |
+| ----------- | -------------------- | ------------------------------- |
+| `check`     | Positive test        | `checkInitialValueIsZero()`     |
 | `checkFail` | Negative/revert test | `checkFailUnauthorizedAccess()` |
 
 ## Requirement Traceability
@@ -71,6 +71,7 @@ test/
 ```
 
 Each test file:
+
 1. Imports `remix_tests.sol` and the contract under test
 2. Uses `beforeEach()` to deploy a fresh contract instance
 3. Groups tests logically: positive → edge cases → negative
@@ -79,9 +80,11 @@ Each test file:
 ## Running Tests
 
 ### Locally (Remix IDE)
+
 1. Connect via `npx @remix-project/remixd -s . --remix-ide https://remix.ethereum.org`
 2. Open test file in Remix
 3. Run via Solidity Unit Testing plugin
 
 ### CI (GitHub Actions)
+
 Tests run automatically on push/PR via `EthereumRemix/sol-test@v1.2`.

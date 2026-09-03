@@ -1,9 +1,11 @@
 # 003 — ERC-20 Token Contract
 
 ## Goal
+
 Create a standard ERC-20 token using the proven OpenZeppelin library.
 
 ## Functional requirements
+
 - The contract inherits from OpenZeppelin's `ERC20`.
 - Token Name: "TestToken"
 - Token Symbol: "TTK"
@@ -11,6 +13,7 @@ Create a standard ERC-20 token using the proven OpenZeppelin library.
 - Fixed supply (no external minting or burning functions).
 
 ## Acceptance criteria
+
 - Deployment succeeds in Remix VM.
 - `totalSupply()` equals 1,000,000 * 10^18.
 - `balanceOf(deployer)` equals the total supply.
@@ -26,6 +29,7 @@ No manual deployment or execution in Remix VM has been recorded yet.
 
 Do not treat the following as verified until actual test evidence is
 recorded:
+
 - Compiler result.
 - Unit-test result.
 - Deployment address.

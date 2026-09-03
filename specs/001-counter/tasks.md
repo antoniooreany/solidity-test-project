@@ -36,12 +36,12 @@
 
 ## Traceability Matrix
 
-| Requirement | Task(s) | Test | Contract Line | Status |
-|-------------|---------|------|---------------|--------|
-| FR-001 | T005, T010 | `checkInitialCountIsZero` | Counter.sol:10 | ✅ |
-| FR-002 | T006, T007, T011 | `checkIncrementByOne`, `checkMultipleIncrements` | Counter.sol:18-21 | ✅ |
-| FR-003 | T008, T012 | `checkGetCountReturnsValue` | Counter.sol:27-29 | ✅ |
-| FR-004 | T011 | (event verified via increment tests) | Counter.sol:13, 20 | ✅ |
-| FR-005 | — | `checkAnyAddressCanIncrement` | (no restriction) | ✅ |
-| INV-001 | — | (no decrement exists) | — | ✅ By design |
-| INV-003 | T009 | `checkCountAfterNIncrements` | Counter.sol:18-21 | ✅ |
+| Requirement | Task(s)          | Test                                             | Contract Line      | Status       |
+| ----------- | ---------------- | ------------------------------------------------ | ------------------ | ------------ |
+| FR-001      | T005, T010       | `checkInitialCountIsZero`                        | Counter.sol:10     | ✅           |
+| FR-002      | T006, T007, T011 | `checkIncrementByOne`, `checkMultipleIncrements` | Counter.sol:18-21  | ✅           |
+| FR-003      | T008, T012       | `checkGetCountReturnsValue`                      | Counter.sol:27-29  | ✅           |
+| FR-004      | T011             | (event verified via increment tests)             | Counter.sol:13, 20 | ✅           |
+| FR-005      | —                | `checkAnyAddressCanIncrement`                    | (no restriction)   | ✅           |
+| INV-001     | —                | (no decrement exists)                            | —                  | ✅ By design |
+| INV-003     | T009             | `checkCountAfterNIncrements`                     | Counter.sol:18-21  | ✅           |

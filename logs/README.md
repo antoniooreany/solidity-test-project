@@ -1,6 +1,6 @@
 # Deployment Logs
 
-This directory contains JSONL logs generated during contract deployments. 
+This directory contains JSONL logs generated during contract deployments.
 
 Logs should not be committed to version control, except for this README and `.gitkeep`.
 A `.gitignore` rule is configured to ignore `*.jsonl` files in this directory.

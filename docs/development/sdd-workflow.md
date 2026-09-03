@@ -7,35 +7,41 @@ This project uses [GitHub Spec Kit](https://github.com/github/spec-kit) to enfor
 ## SpecKit Workflow Phases
 
 ### Phase 0: Constitution (One-Time)
+
 Establish project-wide principles in `.specify/memory/constitution.md`.
 This is done once and amended as needed.
 
 **Command**: `/speckit.constitution`
 
 ### Phase 1: Specify
+
 Capture business requirements, user scenarios, acceptance criteria, and edge cases.
 
 **Command**: `/speckit.specify`  
 **Output**: `specs/<feature>/spec.md`
 
 ### Phase 2: Plan
+
 Translate the spec into a technical implementation plan: contract API, storage layout, threat model, test strategy.
 
 **Command**: `/speckit.plan`  
 **Output**: `specs/<feature>/plan.md`
 
 ### Phase 3: Tasks
+
 Decompose the plan into atomic, TDD-ordered tasks with requirement traceability.
 
 **Command**: `/speckit.tasks`  
 **Output**: `specs/<feature>/tasks.md`
 
 ### Phase 4: Implement
+
 Execute tasks following strict TDD: write failing test → implement → refactor.
 
 **Command**: `/speckit.implement`
 
 ### Phase 5: Converge
+
 Verify implementation against acceptance criteria. Run all tests, check coverage, update documentation.
 
 **Command**: `/speckit.converge`
@@ -77,10 +83,10 @@ specs/
 
 Every feature MUST maintain traceability:
 
-| Requirement | Test Case | Contract | Status |
-|-------------|-----------|----------|--------|
-| FR-001 | `checkInitialCountIsZero()` | `Counter.sol:10` | ✅ Verified |
-| FR-002 | `checkIncrementByOne()` | `Counter.sol:18` | ✅ Verified |
+| Requirement | Test Case                   | Contract         | Status      |
+| ----------- | --------------------------- | ---------------- | ----------- |
+| FR-001      | `checkInitialCountIsZero()` | `Counter.sol:10` | ✅ Verified |
+| FR-002      | `checkIncrementByOne()`     | `Counter.sol:18` | ✅ Verified |
 
 ## Rules
 
