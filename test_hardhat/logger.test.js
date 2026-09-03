@@ -9,7 +9,8 @@ const __dirname = path.dirname(__filename);
 
 describe('JSONL Logger', function () {
   const logsDir = path.join(__dirname, '..', 'logs');
-  const testLogFile = path.join(logsDir, `system_development.jsonl`);
+  const envName = process.env.NODE_ENV || 'development';
+  const testLogFile = path.join(logsDir, `system_${envName}.jsonl`);
 
   before(function () {
     if (fs.existsSync(testLogFile)) {

@@ -18,6 +18,14 @@ const GLOBAL_CONFIG = {
       api: 'http://localhost:3000/api',
     },
   },
+  test: {
+    version: '1.0.0-test',
+    saltUsed: 'test_salt_1234',
+    endpoints: {
+      rpc: 'http://127.0.0.1:8545',
+      api: 'http://localhost:3000/api',
+    },
+  },
   staging: {
     version: '1.0.0-rc.1',
     saltUsed: 'stg_salt_4412',
