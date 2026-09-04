@@ -1,11 +1,13 @@
 export async function executeDeploymentCommand({ env, defaults, dependencies }) {
-  try {
-    const { request, credentials } = dependencies.parseDeploymentEnvironment(env, defaults);
+  const { parseDeploymentEnvironment, runDeployment, runtimeDependencies } = dependencies;
 
-    const runtimeResult = await dependencies.runDeployment({
+  try {
+    const { request, credentials } = parseDeploymentEnvironment(env, defaults);
+
+    const runtimeResult = await runDeployment({
       request,
       credentials,
-      dependencies: {},
+      dependencies: runtimeDependencies ?? {},
     });
 
     if (runtimeResult.success) {
