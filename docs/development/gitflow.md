@@ -2,14 +2,14 @@
 
 ## Branch Model
 
-| Branch | Purpose | Base | Merges Into |
-|--------|---------|------|-------------|
-| `main` | Production-ready releases | — | — |
-| `develop` | Integration branch | `main` | `release/*` |
-| `feature/*` | New features/specs | `develop` | `develop` |
-| `fix/*` | Bug fixes | `develop` | `develop` |
-| `release/*` | Release stabilization | `develop` | `main` + `develop` |
-| `hotfix/*` | Critical production fixes | `main` | `main` + `develop` |
+| Branch      | Purpose                   | Base      | Merges Into        |
+| ----------- | ------------------------- | --------- | ------------------ |
+| `main`      | Production-ready releases | —         | —                  |
+| `develop`   | Integration branch        | `main`    | `release/*`        |
+| `feature/*` | New features/specs        | `develop` | `develop`          |
+| `fix/*`     | Bug fixes                 | `develop` | `develop`          |
+| `release/*` | Release stabilization     | `develop` | `main` + `develop` |
+| `hotfix/*`  | Critical production fixes | `main`    | `main` + `develop` |
 
 ## Branch Naming
 
@@ -21,6 +21,7 @@ hotfix/v<major>.<minor>.<patch+1>
 ```
 
 Examples:
+
 - `feature/speckit-sdd-improvement`
 - `feature/erc721-nft-contract`
 - `fix/counter-overflow-guard`
@@ -40,15 +41,15 @@ All commit messages MUST follow the [Conventional Commits](https://www.conventio
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature or contract |
-| `fix` | Bug fix |
-| `test` | Adding or updating tests |
-| `docs` | Documentation changes |
-| `chore` | Maintenance, CI, tooling |
+| Type       | Description                                |
+| ---------- | ------------------------------------------ |
+| `feat`     | New feature or contract                    |
+| `fix`      | Bug fix                                    |
+| `test`     | Adding or updating tests                   |
+| `docs`     | Documentation changes                      |
+| `chore`    | Maintenance, CI, tooling                   |
 | `refactor` | Code restructuring without behavior change |
-| `ci` | CI/CD configuration changes |
+| `ci`       | CI/CD configuration changes                |
 
 ### Scopes
 
@@ -75,7 +76,7 @@ fix(erc20): resolve OpenZeppelin import path
 
 ## Protected Branches
 
-| Branch | Rules |
-|--------|-------|
-| `main` | Require PR, require CI pass, no force push |
+| Branch    | Rules                                      |
+| --------- | ------------------------------------------ |
+| `main`    | Require PR, require CI pass, no force push |
 | `develop` | Require PR, require CI pass, no force push |

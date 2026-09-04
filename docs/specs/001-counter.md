@@ -1,11 +1,12 @@
 # Spec 001: Counter Contract
 
 ## Overview
+
 A simple smart contract designed as a first step for learning Solidity. It implements a basic counter.
 
 ## Requirements
 
-1. **State Variable**: 
+1. **State Variable**:
    - Must store a non-negative integer value (`uint256`).
 2. **Increment Action**:
    - Must provide a function to increase the counter's value by exactly 1.

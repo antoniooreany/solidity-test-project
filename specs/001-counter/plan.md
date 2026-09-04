@@ -33,21 +33,21 @@ Implement a minimal counter smart contract as a first Solidity learning exercise
 
 ### State Variables
 
-| Name | Type | Visibility | Description |
-|------|------|------------|-------------|
-| `count` | `uint256` | `private` | Current counter value |
+| Name    | Type      | Visibility | Description           |
+| ------- | --------- | ---------- | --------------------- |
+| `count` | `uint256` | `private`  | Current counter value |
 
 ### Functions
 
-| Function | Visibility | Mutability | Parameters | Returns | Description |
-|----------|-----------|------------|------------|---------|-------------|
-| `increment()` | `public` | state-changing | — | — | Increases count by 1, emits event |
-| `getCount()` | `public` | `view` | — | `uint256` | Returns current count |
+| Function      | Visibility | Mutability     | Parameters | Returns   | Description                       |
+| ------------- | ---------- | -------------- | ---------- | --------- | --------------------------------- |
+| `increment()` | `public`   | state-changing | —          | —         | Increases count by 1, emits event |
+| `getCount()`  | `public`   | `view`         | —          | `uint256` | Returns current count             |
 
 ### Events
 
-| Event | Parameters | Description |
-|-------|------------|-------------|
+| Event                | Parameters         | Description                  |
+| -------------------- | ------------------ | ---------------------------- |
 | `CounterIncremented` | `uint256 newValue` | Emitted after each increment |
 
 ## Project Structure
@@ -67,21 +67,21 @@ specs/001-counter/
 
 ## Test Strategy
 
-| Requirement | Test Function | Type |
-|-------------|--------------|------|
-| FR-001 | `checkInitialCountIsZero()` | Positive |
-| FR-002 | `checkIncrementByOne()` | Positive |
-| FR-002 | `checkMultipleIncrements()` | Positive |
-| FR-003 | `checkGetCountReturnsValue()` | Positive |
-| FR-004 | `checkIncrementEmitsEvent()` | Positive (event verification) |
-| FR-005 | `checkAnyAddressCanIncrement()` | Positive |
-| INV-001 | `checkCounterNeverDecreases()` | Invariant |
-| INV-003 | `checkCountAfterNIncrements()` | Property |
+| Requirement | Test Function                   | Type                          |
+| ----------- | ------------------------------- | ----------------------------- |
+| FR-001      | `checkInitialCountIsZero()`     | Positive                      |
+| FR-002      | `checkIncrementByOne()`         | Positive                      |
+| FR-002      | `checkMultipleIncrements()`     | Positive                      |
+| FR-003      | `checkGetCountReturnsValue()`   | Positive                      |
+| FR-004      | `checkIncrementEmitsEvent()`    | Positive (event verification) |
+| FR-005      | `checkAnyAddressCanIncrement()` | Positive                      |
+| INV-001     | `checkCounterNeverDecreases()`  | Invariant                     |
+| INV-003     | `checkCountAfterNIncrements()`  | Property                      |
 
 ## Threat Model
 
-| Threat | Mitigation | Risk |
-|--------|-----------|------|
-| Integer overflow | Solidity ^0.8.20 has built-in overflow protection | None |
-| Unauthorized access | Intentionally open — documented in spec | Accepted |
-| Reentrancy | No external calls, no ETH transfers | None |
+| Threat              | Mitigation                                        | Risk     |
+| ------------------- | ------------------------------------------------- | -------- |
+| Integer overflow    | Solidity ^0.8.20 has built-in overflow protection | None     |
+| Unauthorized access | Intentionally open — documented in spec           | Accepted |
+| Reentrancy          | No external calls, no ETH transfers               | None     |

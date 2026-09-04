@@ -29,15 +29,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 <type>(<scope>): <description>
 ```
 
-| Type | Use For |
-|------|---------|
-| `feat` | New feature or contract |
-| `fix` | Bug fix |
-| `test` | Adding or updating tests |
-| `docs` | Documentation |
-| `chore` | Maintenance, CI, tooling |
+| Type       | Use For                               |
+| ---------- | ------------------------------------- |
+| `feat`     | New feature or contract               |
+| `fix`      | Bug fix                               |
+| `test`     | Adding or updating tests              |
+| `docs`     | Documentation                         |
+| `chore`    | Maintenance, CI, tooling              |
 | `refactor` | Restructuring without behavior change |
-| `ci` | CI/CD changes |
+| `ci`       | CI/CD changes                         |
 
 ### Testing
 
@@ -55,11 +55,11 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## SpecKit Commands
 
-| Phase | Command | Output |
-|-------|---------|--------|
+| Phase        | Command                 | Output                            |
+| ------------ | ----------------------- | --------------------------------- |
 | Constitution | `/speckit.constitution` | `.specify/memory/constitution.md` |
-| Specify | `/speckit.specify` | `specs/<feature>/spec.md` |
-| Plan | `/speckit.plan` | `specs/<feature>/plan.md` |
-| Tasks | `/speckit.tasks` | `specs/<feature>/tasks.md` |
-| Implement | `/speckit.implement` | Contract + test code |
-| Converge | `/speckit.converge` | Verification report |
+| Specify      | `/speckit.specify`      | `specs/<feature>/spec.md`         |
+| Plan         | `/speckit.plan`         | `specs/<feature>/plan.md`         |
+| Tasks        | `/speckit.tasks`        | `specs/<feature>/tasks.md`        |
+| Implement    | `/speckit.implement`    | Contract + test code              |
+| Converge     | `/speckit.converge`     | Verification report               |

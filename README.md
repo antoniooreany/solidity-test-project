@@ -20,14 +20,14 @@ See [SDD Workflow Guide](docs/development/sdd-workflow.md) for details.
 
 ### GitFlow
 
-| Branch | Purpose |
-|--------|---------|
-| `main` | Production-ready releases |
-| `develop` | Integration branch |
-| `feature/*` | New features |
-| `fix/*` | Bug fixes |
-| `release/*` | Release preparation |
-| `hotfix/*` | Critical fixes |
+| Branch      | Purpose                   |
+| ----------- | ------------------------- |
+| `main`      | Production-ready releases |
+| `develop`   | Integration branch        |
+| `feature/*` | New features              |
+| `fix/*`     | Bug fixes                 |
+| `release/*` | Release preparation       |
+| `hotfix/*`  | Critical fixes            |
 
 See [GitFlow Guide](docs/development/gitflow.md) for branch naming, Conventional Commits, and PR rules.
 
@@ -81,6 +81,7 @@ docs/
 ### Local Development
 
 Connect to Remix IDE:
+
 ```bash
 npx @remix-project/remixd -s . --remix-ide https://remix.ethereum.org
 ```
@@ -88,14 +89,15 @@ npx @remix-project/remixd -s . --remix-ide https://remix.ethereum.org
 ### CI/CD
 
 Automated via GitHub Actions ([solidity-ci.yml](.github/workflows/solidity-ci.yml)):
+
 - Solidity compilation and unit tests
 - Spec traceability verification
 - Conventional Commits validation on PRs
 
 ## Smart Contracts
 
-| Contract | Spec | Tests | Status |
-|----------|------|-------|--------|
-| Counter.sol | [001-counter](specs/001-counter/spec.md) | [Counter_test.sol](test/Counter_test.sol) | ✅ Verified |
-| SimpleStorage.sol | [002-simple-storage](specs/002-simple-storage/spec.md) | [SimpleStorage_test.sol](test/SimpleStorage_test.sol) | ✅ Verified |
-| MyToken.sol | [003-erc20-token](specs/003-erc20-token/spec.md) | [MyToken_test.sol](test/MyToken_test.sol) | ⚠️ Pending Manual Verification |
+| Contract          | Spec                                                   | Tests                                                 | Status                         |
+| ----------------- | ------------------------------------------------------ | ----------------------------------------------------- | ------------------------------ |
+| Counter.sol       | [001-counter](specs/001-counter/spec.md)               | [Counter_test.sol](test/Counter_test.sol)             | ✅ Verified                    |
+| SimpleStorage.sol | [002-simple-storage](specs/002-simple-storage/spec.md) | [SimpleStorage_test.sol](test/SimpleStorage_test.sol) | ✅ Verified                    |
+| MyToken.sol       | [003-erc20-token](specs/003-erc20-token/spec.md)       | [MyToken_test.sol](test/MyToken_test.sol)             | ⚠️ Pending Manual Verification |
