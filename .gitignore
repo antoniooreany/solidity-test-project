@@ -26,3 +26,4 @@ artifacts/
 # Logs
 logs/*.jsonl
 !logs/.gitkeep
+.deps/
