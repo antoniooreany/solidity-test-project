@@ -95,23 +95,7 @@ export function validateDeploymentRequest({
   };
 }
 
-export function validateVerifiedNetwork({ deployNetwork, rpcUrl, actualChainId }) {
-  if (typeof rpcUrl !== 'string' || rpcUrl.trim() === '') {
-    return {
-      allowed: false,
-      reason: 'RPC URL is required for network verification',
-    };
-  }
-
-  try {
-    new URL(rpcUrl);
-  } catch {
-    return {
-      allowed: false,
-      reason: 'Invalid RPC URL format in verification',
-    };
-  }
-
+export function validateVerifiedNetwork({ deployNetwork, actualChainId }) {
   if (deployNetwork === 'local' && actualChainId === 31337) {
     return { allowed: true };
   }

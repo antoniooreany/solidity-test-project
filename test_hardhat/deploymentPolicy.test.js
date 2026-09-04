@@ -183,26 +183,9 @@ describe('Deployment Safety Policy', function () {
   });
 
   describe('validateVerifiedNetwork (Verification Layer)', function () {
-    it('should reject verified deployment if rpcUrl is empty or invalid', function () {
-      const resultEmpty = validateVerifiedNetwork({
-        deployNetwork: 'local',
-        rpcUrl: '',
-        actualChainId: 31337,
-      });
-      assert.equal(resultEmpty.allowed, false);
-
-      const resultInvalid = validateVerifiedNetwork({
-        deployNetwork: 'local',
-        rpcUrl: 'invalid-url',
-        actualChainId: 31337,
-      });
-      assert.equal(resultInvalid.allowed, false);
-    });
-
     it('should allow verified local with actual chain ID 31337', function () {
       const result = validateVerifiedNetwork({
         deployNetwork: 'local',
-        rpcUrl: 'http://127.0.0.1:8545',
         actualChainId: 31337,
       });
       assert.deepEqual(result, { allowed: true });
@@ -213,7 +196,6 @@ describe('Deployment Safety Policy', function () {
       it(`should reject local deployment when verified chain ID is ${actualChainId}`, function () {
         const result = validateVerifiedNetwork({
           deployNetwork: 'local',
-          rpcUrl: 'http://127.0.0.1:8545',
           actualChainId,
         });
         assert.equal(result.allowed, false);
@@ -223,7 +205,6 @@ describe('Deployment Safety Policy', function () {
     it('should allow verified sepolia with actual chain ID 11155111', function () {
       const result = validateVerifiedNetwork({
         deployNetwork: 'sepolia',
-        rpcUrl: 'https://rpc.sepolia.example.invalid/v3/placeholder',
         actualChainId: 11155111,
       });
       assert.deepEqual(result, { allowed: true });
@@ -234,7 +215,6 @@ describe('Deployment Safety Policy', function () {
       it(`should reject sepolia deployment when verified chain ID is ${actualChainId}`, function () {
         const result = validateVerifiedNetwork({
           deployNetwork: 'sepolia',
-          rpcUrl: 'https://rpc.sepolia.example.invalid/v3/placeholder',
           actualChainId,
         });
         assert.equal(result.allowed, false);
@@ -244,7 +224,6 @@ describe('Deployment Safety Policy', function () {
     it('should reject mainnet deployment unconditionally at verification layer', function () {
       const result = validateVerifiedNetwork({
         deployNetwork: 'mainnet',
-        rpcUrl: 'https://rpc.mainnet.example.invalid/v3/placeholder',
         actualChainId: 1,
       });
       assert.equal(result.allowed, false);
@@ -253,7 +232,6 @@ describe('Deployment Safety Policy', function () {
     it('should reject unknown deployment unconditionally at verification layer', function () {
       const result = validateVerifiedNetwork({
         deployNetwork: 'unknown-chain',
-        rpcUrl: 'https://rpc.example.invalid',
         actualChainId: 31337, // Disguise
       });
       assert.equal(result.allowed, false);
