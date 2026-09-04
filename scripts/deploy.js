@@ -1,126 +1,84 @@
-import { ethers } from 'ethers';
-import fs from 'fs';
-import path from 'path';
 import { fileURLToPath } from 'url';
-import Logger from './utils/logger.js';
-import { config, ENV } from './config/constants.js';
+import { config } from './config/constants.js';
 import 'dotenv/config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { parseDeploymentEnvironment } from './config/deploymentEnvironment.js';
+import { runDeployment } from './deployRuntime.js';
+import { executeDeploymentCommand } from './deployCLI.js';
 
-const logger = new Logger('DeployScript');
+export async function main(env, deps) {
+  const defaults = {
+    rpcUrl: deps.defaults.rpcUrl,
+    hardhatDefaultPrivateKey: deps.defaults.hardhatDefaultPrivateKey,
+  };
 
-// Enforce DRY_RUN flag from environment
-const IS_DRY_RUN = process.env.DRY_RUN === 'true';
-
-async function main() {
-  logger.info(`Starting deployment process (Dry run: ${IS_DRY_RUN})`, {
-    action: 'deployment_start',
-    targetRpc: config.endpoints.rpc,
-    environment: ENV,
-    dryRun: IS_DRY_RUN,
+  const result = await deps.executeDeploymentCommand({
+    env,
+    defaults,
+    dependencies: {
+      parseDeploymentEnvironment: deps.parseDeploymentEnvironment,
+      runDeployment: deps.runDeployment,
+      runtimeDependencies: deps.runtimeDependencies,
+    },
   });
 
-  try {
-    let provider, deployer;
-
-    if (!IS_DRY_RUN) {
-      provider = new ethers.JsonRpcProvider(config.endpoints.rpc);
-      const privateKey =
-        process.env.PRIVATE_KEY ||
-        '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-      deployer = new ethers.Wallet(privateKey, provider);
-
-      let balance;
-      try {
-        balance = await provider.getBalance(deployer.address);
-      } catch (e) {
-        logger.warn('Could not fetch balance. Is the RPC running?', { error: e.message });
-        balance = 0n;
-      }
-
-      logger.info('Deployer account loaded', {
-        action: 'deployer_info',
-        address: deployer.address,
-        balance: ethers.formatEther(balance),
-      });
-    } else {
-      // Mock deployer for dry-run
-      const privateKey =
-        process.env.PRIVATE_KEY ||
-        '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-      deployer = new ethers.Wallet(privateKey); // No provider
-      logger.info('Deployer account loaded (Dry Run)', {
-        action: 'deployer_info',
-        address: deployer.address,
-        balance: '100.0',
-      });
-    }
-
-    // Helper to load artifacts
-    const loadArtifact = (name) => {
-      const artifactPath = path.join(
-        __dirname,
-        '..',
-        'artifacts',
-        'contracts',
-        `${name}.sol`,
-        `${name}.json`,
-      );
-      if (!fs.existsSync(artifactPath)) {
-        throw new Error(
-          `Artifact for ${name} not found at ${artifactPath}. Did you run 'npx hardhat compile'?`,
-        );
-      }
-      return JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
-    };
-
-    const deployContract = async (contractName) => {
-      logger.info(`Deploying ${contractName}...`);
-      const artifact = loadArtifact(contractName);
-      const Factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, deployer);
-
-      if (IS_DRY_RUN) {
-        logger.info(`[DRY RUN] ${contractName} deployment simulated.`, {
-          action: 'deployment_dry_run',
-          contract: contractName,
-        });
-        return `0xMock${contractName}Address`;
-      }
-
-      // Actual Deployment
-      const contract = await Factory.deploy();
-      await contract.waitForDeployment();
-      const address = await contract.getAddress();
-      const txHash = contract.deploymentTransaction().hash;
-
-      logger.info(`${contractName} successfully deployed`, {
-        action: 'deployment_success',
-        contract: contractName,
-        address: address,
-        txHash: txHash,
-      });
-
-      return address;
-    };
-
-    const myTokenAddress = await deployContract('MyToken');
-    const counterAddress = await deployContract('Counter');
-    const simpleStorageAddress = await deployContract('SimpleStorage');
-
-    logger.info('All contracts deployed successfully', {
-      action: 'deployment_complete',
-      contracts: {
-        MyToken: myTokenAddress,
-        Counter: counterAddress,
-        SimpleStorage: simpleStorageAddress,
-      },
-    });
-  } catch (error) {
-    logger.error('Deployment failed', error, { action: 'deployment_error' });
-    process.exitCode = 1;
-  }
+  return result;
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  (async () => {
+    const { ethers } = await import('ethers');
+    const fs = await import('fs');
+    const path = await import('path');
+    const defaultPolicy = await import('./config/deploymentPolicy.js');
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const HARDHAT_DEFAULT_KEY =
+      '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+
+    const productionDeps = {
+      executeDeploymentCommand,
+      parseDeploymentEnvironment,
+      runDeployment,
+      runtimeDependencies: {
+        policy: defaultPolicy,
+        createProvider: (rpcUrl) => new ethers.JsonRpcProvider(rpcUrl),
+        getNetwork: async (provider) => provider.getNetwork(),
+        createSigner: async ({ provider, deployNetwork }) => {
+          const key =
+            deployNetwork === 'local'
+              ? process.env.PRIVATE_KEY || HARDHAT_DEFAULT_KEY
+              : process.env.PRIVATE_KEY;
+          return new ethers.Wallet(key, provider);
+        },
+        loadArtifact: async (name) => {
+          const artifactPath = path.join(
+            __dirname,
+            '..',
+            'artifacts',
+            'contracts',
+            `${name}.sol`,
+            `${name}.json`,
+          );
+          return JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
+        },
+        createContractFactory: ({ abi, bytecode, signer }) =>
+          new ethers.ContractFactory(abi, bytecode, signer),
+        waitForDeployment: async (contract) => contract.waitForDeployment(),
+        getContractAddress: async (contract) => contract.getAddress(),
+      },
+      defaults: {
+        rpcUrl: config.endpoints.rpc,
+        hardhatDefaultPrivateKey: HARDHAT_DEFAULT_KEY,
+      },
+    };
+
+    try {
+      const { exitCode } = await main(process.env, productionDeps);
+      process.exitCode = exitCode;
+    } catch {
+      process.exitCode = 1;
+    }
+  })();
+}
