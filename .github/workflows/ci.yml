@@ -68,9 +68,9 @@ jobs:
 
       - name: Test deployment script (Dry Run)
         env:
-          DRY_RUN: "true"
-          DEPLOY_NETWORK: "local"
-          ALLOW_SEPOLIA_DEPLOY: "false"
+          DRY_RUN: 'true'
+          DEPLOY_NETWORK: 'local'
+          ALLOW_SEPOLIA_DEPLOY: 'false'
         run: node scripts/deploy.js
 
   commitlint:
