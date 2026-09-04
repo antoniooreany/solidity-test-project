@@ -183,6 +183,22 @@ describe('Deployment Safety Policy', function () {
   });
 
   describe('validateVerifiedNetwork (Verification Layer)', function () {
+    it('should reject verified deployment if rpcUrl is empty or invalid', function () {
+      const resultEmpty = validateVerifiedNetwork({
+        deployNetwork: 'local',
+        rpcUrl: '',
+        actualChainId: 31337,
+      });
+      assert.equal(resultEmpty.allowed, false);
+
+      const resultInvalid = validateVerifiedNetwork({
+        deployNetwork: 'local',
+        rpcUrl: 'invalid-url',
+        actualChainId: 31337,
+      });
+      assert.equal(resultInvalid.allowed, false);
+    });
+
     it('should allow verified local with actual chain ID 31337', function () {
       const result = validateVerifiedNetwork({
         deployNetwork: 'local',
