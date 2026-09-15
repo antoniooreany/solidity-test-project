@@ -1,8 +1,16 @@
 node_modules
+**/node_modules
 artifacts
+**/artifacts
 cache
+**/cache
 coverage
+**/coverage
 dist
+**/dist
 build
+**/build
 typechain-types
+**/typechain-types
 .deps
+**/.deps

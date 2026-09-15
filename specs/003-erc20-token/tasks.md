@@ -34,7 +34,10 @@
 
 ## Phase 5: TDD Hardening (Invariants and Edge Cases)
 
-- [ ] T019 Add test `checkTransferToZeroAddressFails` (Negative edge case)
+- [x] T019 Add test `checkTransferToZeroAddressFails` (Negative edge case)
+- [x] T020 Add test `checkApproveToZeroAddressFails` (Negative edge case)
+- [x] T021 Add test `checkInvariantTotalSupplyConstant` for INV-001
+- [x] T022 Add test `checkInvariantBalancesSum` for INV-002
 - [ ] T020 Add test `checkApproveToZeroAddressFails` (Negative edge case)
 - [ ] T021 Add test `checkInvariantTotalSupplyConstant` for INV-001
 - [ ] T022 Add test `checkInvariantBalancesSum` for INV-002
