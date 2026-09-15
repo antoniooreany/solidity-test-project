@@ -13,7 +13,7 @@
 - [x] T004 Add test `checkInitialValueIsEmpty` for FR-002
 - [x] T005 Add test `checkOwnerIsDeployer` for FR-003
 - [x] T006 Add test `checkOwnerCanSetValue` for FR-004
-- [x] T007 Add test `checkSubsequentUpdatesReplaceValue` for FR-004
+- [x] T009 Add test `checkNonOwnerCannotSetValue` for FR-007
 
 ## Phase 3: Implementation
 
