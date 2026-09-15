@@ -22,7 +22,7 @@ describe('Deploy CLI Integration', function () {
       getContractAddress: () => {},
     };
 
-    const mockParser = (env, defaults) => {
+    const mockParser = (_env, _defaults) => {
       return {
         request: {
           dryRun: true,

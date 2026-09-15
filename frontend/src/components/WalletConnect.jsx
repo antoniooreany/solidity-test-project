@@ -9,8 +9,12 @@ export function WalletConnect({ account, network, connectWallet, error }) {
         <button onClick={connectWallet}>Connect MetaMask</button>
       ) : (
         <div>
-          <p><strong>Address:</strong> {account}</p>
-          <p><strong>Network:</strong> {network}</p>
+          <p>
+            <strong>Address:</strong> {account}
+          </p>
+          <p>
+            <strong>Network:</strong> {network}
+          </p>
         </div>
       )}
     </div>

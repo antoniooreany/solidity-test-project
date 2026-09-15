@@ -43,15 +43,14 @@ contract SimpleStorageTest {
       'Second Update',
       'State should replace value, not append'
     );
-      // Test 5: Non-owner cannot update the value
-    function checkNonOwnerCannotSetValue() public {
-        address nonOwner = TestsAccounts.getAccount(1);
-        // Attempt to call setValue from a non-owner using low‑level call
-        (bool success, ) = address(simpleStorage).call(
-            abi.encodeWithSignature("setValue(string)", "hacked")
-        );
-        Assert.equal(success, false, "Non-owner must not be able to set value");
-    }
-}
-
+  }
+  // Test 5: Non-owner cannot update the value
+  function checkNonOwnerCannotSetValue() public {
+    address nonOwner = TestsAccounts.getAccount(1);
+    // Attempt to call setValue from a non-owner using low‑level call
+    (bool success, ) = address(simpleStorage).call(
+      abi.encodeWithSignature('setValue(string)', 'hacked')
+    );
+    Assert.equal(success, false, 'Non-owner must not be able to set value');
+  }
 }

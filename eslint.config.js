@@ -3,19 +3,19 @@ import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
-  eslint.configs.recommended,
   {
     ignores: [
-      'node_modules/**',
-      'artifacts/**',
-      'cache/**',
-      'coverage/**',
-      'dist/**',
-      'build/**',
-      'typechain-types/**',
-      '.deps/**',
+      '**/node_modules/**',
+      '**/artifacts/**',
+      '**/cache/**',
+      '**/coverage/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/typechain-types/**',
+      '**/.deps/**',
     ],
   },
+  eslint.configs.recommended,
   {
     languageOptions: {
       ecmaVersion: 'latest',
