@@ -4,7 +4,7 @@ import App from './App';
 describe('App', () => {
   it('renders without crashing and shows the main title', () => {
     render(<App />);
-    expect(screen.getByText('SimpleStorage UI')).toBeInTheDocument();
+    expect(screen.getByText('Smart Contract Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Connect MetaMask')).toBeInTheDocument();
   });
 
