@@ -104,9 +104,60 @@ function App() {
     }
   };
 
+  const switchNetwork = async () => {
+    if (!window.ethereum) return;
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x7A69' }],
+      });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x7A69',
+                chainName: 'Hardhat Localhost',
+                rpcUrls: ['http://127.0.0.1:8545'],
+                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error('Failed to add network:', addError);
+        }
+      } else {
+        console.error('Failed to switch network:', switchError);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchValue();
   }, [account]);
+
+  // Subscribe to real-time ValueChanged contract events
+  useEffect(() => {
+    if (!contractAddress) return;
+    try {
+      const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+      const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, provider);
+
+      const handleValueChanged = (_oldVal, newVal) => {
+        setValue(newVal.toString());
+      };
+
+      contract.on('ValueChanged', handleValueChanged);
+
+      return () => {
+        contract.off('ValueChanged', handleValueChanged);
+      };
+    } catch (err) {
+      console.error('Failed to subscribe to ValueChanged event:', err);
+    }
+  }, [contractAddress]);
 
   // Listen for account/network changes & auto-restore connected wallet
   useEffect(() => {
@@ -141,6 +192,7 @@ function App() {
         account={account}
         network={network}
         connectWallet={connectWallet}
+        switchNetwork={switchNetwork}
         error={error}
       />
 

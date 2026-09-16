@@ -7,4 +7,10 @@ describe('App', () => {
     expect(screen.getByText('SimpleStorage UI')).toBeInTheDocument();
     expect(screen.getByText('Connect MetaMask')).toBeInTheDocument();
   });
+
+  it('renders Current Value section', () => {
+    render(<App />);
+    expect(screen.getByText('Current Value')).toBeInTheDocument();
+    expect(screen.getByText('Update Value')).toBeInTheDocument();
+  });
 });
