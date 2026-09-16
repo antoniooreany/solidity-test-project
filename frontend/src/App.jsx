@@ -50,14 +50,28 @@ function App() {
   const fetchValue = async () => {
     if (!contractAddress) return;
     try {
-      const provider = new ethers.BrowserProvider(
-        window.ethereum || window.ethers.providers.getDefaultProvider('http://127.0.0.1:8545'),
-      );
+      let provider;
+      if (window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum);
+      } else {
+        provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+      }
       const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, provider);
       const val = await contract.getValue();
       setValue(val.toString());
-    } catch (err) {
-      console.error('Error fetching value:', err);
+    } catch (_err) {
+      try {
+        const localProvider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+        const contract = new ethers.Contract(
+          contractAddress,
+          SimpleStorageArtifact.abi,
+          localProvider,
+        );
+        const val = await contract.getValue();
+        setValue(val.toString());
+      } catch (fallbackErr) {
+        console.error('Error fetching value:', fallbackErr);
+      }
     }
   };
 
@@ -90,14 +104,20 @@ function App() {
   };
 
   useEffect(() => {
-    if (account && contractAddress) {
+    if (contractAddress) {
       fetchValue();
     }
-  }, [account, contractAddress]);
+  }, [contractAddress, account]);
 
-  // Listen for account/network changes
+  // Listen for account/network changes & auto-restore connected wallet
   useEffect(() => {
     if (window.ethereum) {
+      window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
+        if (accounts.length > 0) {
+          connectWallet();
+        }
+      });
+
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) setAccount(accounts[0]);
         else setAccount('');
