@@ -6,6 +6,7 @@ contract SimpleStorage {
 
   address public immutable owner;
   string private value;
+  string[] private _history;
 
   event ValueChanged(string oldValue, string newValue);
 
@@ -23,11 +24,20 @@ contract SimpleStorage {
   function setValue(string calldata newValue) external onlyOwner {
     string memory oldValue = value;
     value = newValue;
+    _history.push(newValue);
 
     emit ValueChanged(oldValue, newValue);
   }
 
   function getValue() external view returns (string memory) {
     return value;
+  }
+
+  function getHistory() external view returns (string[] memory) {
+    return _history;
+  }
+
+  function getHistoryCount() external view returns (uint256) {
+    return _history.length;
   }
 }

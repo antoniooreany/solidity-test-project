@@ -53,4 +53,11 @@ contract SimpleStorageTest {
     );
     Assert.equal(success, false, 'Non-owner must not be able to set value');
   }
+
+  // Test 6: Value history is tracked
+  function checkValueHistoryTracking() public {
+    simpleStorage.setValue('v1');
+    simpleStorage.setValue('v2');
+    Assert.equal(simpleStorage.getHistoryCount(), 2, 'History count should be 2');
+  }
 }
