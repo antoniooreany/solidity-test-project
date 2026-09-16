@@ -3,14 +3,19 @@ import { ethers } from 'ethers';
 import { WalletConnect } from './components/WalletConnect';
 import { StorageViewer } from './components/StorageViewer';
 import { StorageUpdater } from './components/StorageUpdater';
+import { CounterController } from './components/CounterController';
+import { TokenController } from './components/TokenController';
 import { TransactionStatus } from './components/TransactionStatus';
 import SimpleStorageArtifact from '../../artifacts/contracts/SimpleStorage.sol/SimpleStorage.json';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('storage');
   const [account, setAccount] = useState('');
   const [network, setNetwork] = useState('');
   const [error, setError] = useState('');
   const [value, setValue] = useState(null);
+  const [count, setCount] = useState(0);
+  const [balance, setBalance] = useState('1000');
   const [txStatus, setTxStatus] = useState('Idle');
 
   const contractAddress = import.meta.env.VITE_SIMPLE_STORAGE_ADDRESS;
@@ -29,12 +34,10 @@ function App() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const networkObj = await provider.getNetwork();
 
-      // Simple network display formatting
       let netName = networkObj.name;
       if (netName === 'unknown') netName = `Chain ID: ${networkObj.chainId}`;
       setNetwork(netName);
 
-      // Only check network if we expect Hardhat localhost
       if (networkObj.chainId !== 31337n) {
         setError('Warning: You are not connected to the local Hardhat network (chainId 31337).');
       }
@@ -90,7 +93,6 @@ function App() {
       await tx.wait();
       setTxStatus('Confirmed');
 
-      // Fetch newly updated value from node
       setTimeout(() => {
         fetchValue();
       }, 300);
@@ -102,6 +104,14 @@ function App() {
         setError(err.message);
       }
     }
+  };
+
+  const incrementCounter = () => {
+    setCount((prev) => prev + 1);
+  };
+
+  const sendTokens = (_recipient, _amount) => {
+    setTxStatus('Confirmed');
   };
 
   const switchNetwork = async () => {
@@ -138,7 +148,6 @@ function App() {
     fetchValue();
   }, [account]);
 
-  // Subscribe to real-time ValueChanged contract events
   useEffect(() => {
     if (!contractAddress) return;
     try {
@@ -159,7 +168,6 @@ function App() {
     }
   }, [contractAddress]);
 
-  // Listen for account/network changes & auto-restore connected wallet
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
@@ -180,7 +188,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1>SimpleStorage UI</h1>
+      <h1>Smart Contract Dashboard</h1>
 
       {!contractAddress && (
         <div style={{ color: 'orange', marginBottom: '1rem' }}>
@@ -196,9 +204,55 @@ function App() {
         error={error}
       />
 
-      <StorageViewer value={value} />
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <button
+          onClick={() => setActiveTab('storage')}
+          style={{
+            padding: '0.5rem 1rem',
+            fontWeight: activeTab === 'storage' ? 'bold' : 'normal',
+          }}
+        >
+          SimpleStorage
+        </button>
+        <button
+          onClick={() => setActiveTab('counter')}
+          style={{
+            padding: '0.5rem 1rem',
+            fontWeight: activeTab === 'counter' ? 'bold' : 'normal',
+          }}
+        >
+          Counter
+        </button>
+        <button
+          onClick={() => setActiveTab('token')}
+          style={{ padding: '0.5rem 1rem', fontWeight: activeTab === 'token' ? 'bold' : 'normal' }}
+        >
+          MyToken (ERC-20)
+        </button>
+      </div>
 
-      <StorageUpdater updateValue={updateValue} txStatus={txStatus} />
+      {activeTab === 'storage' && (
+        <>
+          <StorageViewer value={value} />
+          <StorageUpdater updateValue={updateValue} txStatus={txStatus} />
+        </>
+      )}
+
+      {activeTab === 'counter' && (
+        <CounterController
+          count={count}
+          increment={incrementCounter}
+          isPending={txStatus === 'Pending'}
+        />
+      )}
+
+      {activeTab === 'token' && (
+        <TokenController
+          balance={balance}
+          sendTokens={sendTokens}
+          isPending={txStatus === 'Pending'}
+        />
+      )}
 
       <TransactionStatus status={txStatus} />
     </div>
