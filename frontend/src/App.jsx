@@ -54,7 +54,7 @@ function App() {
         window.ethereum || window.ethers.providers.getDefaultProvider('http://127.0.0.1:8545'),
       );
       const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, provider);
-      const val = await contract.get();
+      const val = await contract.getValue();
       setValue(val.toString());
     } catch (err) {
       console.error('Error fetching value:', err);
@@ -73,7 +73,7 @@ function App() {
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, signer);
 
-      const tx = await contract.set(newValue);
+      const tx = await contract.setValue(newValue);
       setTxStatus('Pending');
 
       await tx.wait();
