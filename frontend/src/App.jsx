@@ -48,30 +48,14 @@ function App() {
   };
 
   const fetchValue = async () => {
-    if (!contractAddress) return;
+    const targetAddress = contractAddress || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
     try {
-      let provider;
-      if (window.ethereum) {
-        provider = new ethers.BrowserProvider(window.ethereum);
-      } else {
-        provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
-      }
-      const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, provider);
+      const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+      const contract = new ethers.Contract(targetAddress, SimpleStorageArtifact.abi, provider);
       const val = await contract.getValue();
       setValue(val.toString());
-    } catch (_err) {
-      try {
-        const localProvider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
-        const contract = new ethers.Contract(
-          contractAddress,
-          SimpleStorageArtifact.abi,
-          localProvider,
-        );
-        const val = await contract.getValue();
-        setValue(val.toString());
-      } catch (fallbackErr) {
-        console.error('Error fetching value:', fallbackErr);
-      }
+    } catch (err) {
+      console.error('Error fetching value:', err);
     }
   };
 
@@ -80,19 +64,24 @@ function App() {
       setError('Please connect wallet first.');
       return;
     }
+    const targetAddress = contractAddress || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
     setError('');
     setTxStatus('Awaiting wallet');
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, SimpleStorageArtifact.abi, signer);
+      const contract = new ethers.Contract(targetAddress, SimpleStorageArtifact.abi, signer);
 
       const tx = await contract.setValue(newValue);
       setTxStatus('Pending');
 
       await tx.wait();
       setTxStatus('Confirmed');
-      await fetchValue();
+
+      // Fetch newly updated value from node
+      setTimeout(() => {
+        fetchValue();
+      }, 300);
     } catch (err) {
       if (err.code === 'ACTION_REJECTED' || err.code === 4001) {
         setTxStatus('Failed (Rejected by user)');
@@ -104,10 +93,8 @@ function App() {
   };
 
   useEffect(() => {
-    if (contractAddress) {
-      fetchValue();
-    }
-  }, [contractAddress, account]);
+    fetchValue();
+  }, [account]);
 
   // Listen for account/network changes & auto-restore connected wallet
   useEffect(() => {
