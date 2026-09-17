@@ -8,7 +8,8 @@
     "lint:sol": "solhint \"contracts/**/*.sol\"",
     "lint:js": "eslint .",
     "lint": "npm run format:check && npm run lint:sol && npm run lint:js",
-    "lint:fix": "prettier --write . && eslint --fix ."
+    "lint:fix": "prettier --write . && eslint --fix .",
+    "spec:staking": "bash node_modules/speckit/spec/shellspec_spec.sh specs/008-staking-contract/spec.sh"
   },
   "dependencies": {
     "@openzeppelin/contracts": "5.0.1"
@@ -26,7 +27,9 @@
     "mocha": "^11.8.0",
     "prettier": "^3.9.6",
     "prettier-plugin-solidity": "^2.4.1",
-    "solhint": "^6.2.4"
+    "shellspec": "^1.1.1",
+    "solhint": "^6.2.4",
+    "speckit": "^0.1.0"
   },
   "type": "module"
 }
