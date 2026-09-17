@@ -4,21 +4,88 @@ import { WalletConnect } from './components/WalletConnect';
 import { StorageViewer } from './components/StorageViewer';
 import { StorageUpdater } from './components/StorageUpdater';
 import { CounterController } from './components/CounterController';
-import { TokenController } from './components/TokenController';
+import { StakingController } from './components/StakingController';
 import { TransactionStatus } from './components/TransactionStatus';
 import SimpleStorageArtifact from '../../artifacts/contracts/SimpleStorage.sol/SimpleStorage.json';
-
+import MyTokenArtifact from '../../artifacts/contracts/MyToken.sol/MyToken.json';
+import { TokenController } from './components/TokenController';
 function App() {
   const [activeTab, setActiveTab] = useState('storage');
   const [account, setAccount] = useState('');
-  const [network, setNetwork] = useState('');
+  const [network, setNetwork] = useState(''); const contractAddress = import.meta.env.VITE_SIMPLE_STORAGE_ADDRESS;
   const [error, setError] = useState('');
   const [value, setValue] = useState(null);
   const [count, setCount] = useState(0);
-  const [balance, setBalance] = useState('1000');
+// placeholder balance removed
   const [txStatus, setTxStatus] = useState('Idle');
 
-  const contractAddress = import.meta.env.VITE_SIMPLE_STORAGE_ADDRESS;
+  // Token address from .env
+  const tokenAddress = import.meta.env.VITE_MY_TOKEN_ADDRESS;
+  console.log('Token address from env:', tokenAddress);
+
+
+  // State for token balance
+  const [tokenBalance, setTokenBalance] = useState(null);
+
+  // Fetch token balance for the connected account
+  const fetchBalance = async () => {
+    if (!account || !tokenAddress) {
+      console.log('fetchBalance aborted: account or tokenAddress missing', { account, tokenAddress });
+      return;
+    }
+    try {
+      const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+      const tokenContract = new ethers.Contract(tokenAddress, MyTokenArtifact.abi, provider);
+      const rawBal = await tokenContract.balanceOf(account);
+      // Assuming 18 decimals
+      const formatted = ethers.formatUnits(rawBal, 18);
+      console.log('fetchBalance called, account:', account, 'tokenAddress:', tokenAddress);
+      console.log('Fetched raw token balance:', rawBal.toString());
+      console.log('Formatted token balance:', formatted);
+      setTokenBalance(formatted);
+    } catch (err) {
+      console.error('Error fetching token balance:', err);
+    }
+  };
+
+  // Send tokens to recipient
+  const sendTokens = async (recipient, amount) => {
+    if (!account) { setError('Please connect wallet first.'); return; }
+    if (!tokenAddress) { setError('Token address missing in .env'); return; }
+    if (!recipient) { setError('Введите адрес'); return; }
+    if (!amount || isNaN(amount)) { setError('Введите число'); return; }
+    setError('');
+    setTxStatus('Awaiting wallet');
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const tokenContract = new ethers.Contract(tokenAddress, MyTokenArtifact.abi, signer);
+      const parsed = ethers.parseUnits(amount, 18);
+      console.log('sendTokens called with recipient:', recipient, 'amount:', amount);
+      console.log('Attempting token transfer...');
+      const tx = await tokenContract.transfer(recipient, parsed);
+      console.log('Transaction sent, hash:', tx.hash);
+      setTxStatus('Pending');
+      await tx.wait();
+      console.log('Transaction confirmed');
+      setTxStatus('Confirmed');
+      // Refresh balance after a short delay
+      setTimeout(fetchBalance, 300);
+    } catch (err) {
+      if (err.code === 'ACTION_REJECTED' || err.code === 4001) {
+        setTxStatus('Failed (Rejected by user)');
+      } else {
+        setTxStatus('Failed');
+        setError(err.message);
+      }
+    }
+  };
+
+  // Refresh token balance when account or token address changes
+  useEffect(() => {
+    fetchBalance();
+  }, [account, tokenAddress]);
+
 
   const connectWallet = async () => {
     setError('');
@@ -110,9 +177,7 @@ function App() {
     setCount((prev) => prev + 1);
   };
 
-  const sendTokens = (_recipient, _amount) => {
-    setTxStatus('Confirmed');
-  };
+  // Placeholder sendTokens removed – real implementation defined above
 
   const switchNetwork = async () => {
     if (!window.ethereum) return;
@@ -234,7 +299,7 @@ function App() {
       {activeTab === 'storage' && (
         <>
           <StorageViewer value={value} />
-          <StorageUpdater updateValue={updateValue} txStatus={txStatus} />
+          <StorageUpdater value={value} updateValue={updateValue} txStatus={txStatus} />
         </>
       )}
 
@@ -248,7 +313,7 @@ function App() {
 
       {activeTab === 'token' && (
         <TokenController
-          balance={balance}
+          balance={tokenBalance}
           sendTokens={sendTokens}
           isPending={txStatus === 'Pending'}
         />
